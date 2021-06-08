@@ -57,7 +57,7 @@ driver.switch_to.window(driver.window_handles[0])
 def login():
     try:
         driver.find_element_by_id("username").send_keys(IdPass.username)
-        driver.find_element_by_id("password-input").send_keys(IdPass.password)
+        driver.find_element_by_id("password").send_keys(IdPass.password)
         driver.find_element_by_id("login").click()
         print("success : successfully logged in")
     except:
