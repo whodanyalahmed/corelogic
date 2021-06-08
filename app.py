@@ -2,6 +2,8 @@ from platform import system
 import time,os
 from credentials import IdPass
 from selenium import webdriver
+from fake_useragent import UserAgent
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 
 def resource_path(relative_path):
@@ -21,7 +23,12 @@ print("\n\nProcessing.....")
 # options.add_argument("--disable-plugins-discovery")
 # options.add_argument("--start-maximized")
 # options.add_argument('headless')
-driver =webdriver.Chrome(path)
+options = Options()
+ua = UserAgent()
+userAgent = ua.random
+print(userAgent)
+options.add_argument(f'user-agent={userAgent}')
+driver =webdriver.Chrome(path,options=options)
 driver.maximize_window()
 def loadSiteNAcceptCookies():
     try:
@@ -34,7 +41,12 @@ def loadSiteNAcceptCookies():
     finally:
         time.sleep(1)
         try:
+            
+            time.sleep(0.25) #sleep for 250 milliseconds
+            
             driver.find_element_by_css_selector("button.ub-emb-close").click()
+
+            time.sleep(0.25) #sleep for 250 milliseconds
             driver.find_element_by_css_selector("button.eu-cookie-compliance-secondary-button").click()
         except:
             print("error : cant find cookies")
@@ -46,6 +58,7 @@ def loadSiteNAcceptCookies():
             driver.execute_script("arguments[0].style.display = 'block';", container)
             driver.execute_script("arguments[0].className += ' over';", li)
             # driver.find_element_by_css_selector("span.toolbar-icon']")
+            time.sleep(1)
             driver.find_element_by_link_text("RP Data Professional").click()
         print("success : Clicked Accept Cookies")
         
@@ -63,4 +76,31 @@ def login():
     except:
         print("error : cant login...")
 
-login()
+login()    
+
+
+time.sleep(10)
+def addressSearchNDownload(address):
+    if(driver.title == "CoreLogic RP Data"):
+        print("info : Older version")
+        time.sleep(5)
+        driver.find_element_by_xpath("//span[@id='cruxInvited']/a").click()
+        driver.switch_to.window(driver.window_handles[0])
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+    else:
+
+    # while(True):
+    #     if(driver.title=="CoreLogic RP Data"):
+    #         break
+    #     else:
+    #         time.sleep(5)
+        print("info : Newer version")
+        input = driver.find_element_by_xpath('//input[@aria-controls="react-autowhatever-1"]')
+        time.sleep(2)
+        input.send_keys(address)
+        time.sleep(3)
+        input.send_keys(Keys.ARROW_DOWN)
+        input.send_keys(Keys.ENTER)
+
+addressSearchNDownload("5 Wirildar Drive Elanora")
